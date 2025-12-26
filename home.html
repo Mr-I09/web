@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 
+         * Этот стиль обеспечивает плавное появление страницы после перехода.
+         * Он применяется только к главной странице (home.html).
+         */
+        body {
+            /* Устанавливаем начальную прозрачность 0 */
+            opacity: 0;
+            /* Разрешаем прокрутку, переопределяя overflow: hidden из style.css */
+            overflow: auto;
+            /* Анимация плавного появления */
+            animation: fadeInPage 0.8s ease-in forwards;
+        }
+
+        @keyframes fadeInPage {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <h1 class="site-title">g10</h1>
+        <nav class="site-nav">
+            <ul>
+                <li><a href="home.html">Главная</a></li>
+                <li><a href="#">Проекты</a></li>
+                <li><a href="#">Обо мне</a></li>
+                <li><a href="#">Комьюнити</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="vlog-container">
+        <!-- Посты будут загружены сюда с помощью JavaScript -->
+        <div class="loader"></div>
+    </main>
+
+    <footer class="site-footer-main">
+        <div class="footer-content">
+            <p>&copy; 2024 g10 Production. Все права защищены.</p>
+            <!-- Ссылки на соцсети можно будет добавить сюда -->
+        </div>
+    </footer>
+
+    <button id="scrollTopBtn" title="Наверх">&#8679;</button>
+    <script src="home-script.js"></script>
+
+    <!-- Новый элемент: Лайтбокс для просмотра изображений -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <button class="lightbox-prev" title="Предыдущее изображение">&#10094;</button>
+        <button class="lightbox-next" title="Следующее изображение">&#10095;</button>
+        <img class="lightbox-content" id="lightbox-img" alt="Просмотр изображения">
+    </div>
+</body>
+</html>

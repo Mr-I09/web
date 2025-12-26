@@ -1,0 +1,743 @@
+/* --- Глобальные переменные (Custom Properties) --- */
+:root {
+    --bg-color: #121212;
+    --bg-gradient-start: #1b2735;
+    --bg-gradient-end: #090a0f;
+    --text-color: #e0e0e0;
+    --text-color-muted: #c0c0c0;
+    --surface-color: #1a1a1a;
+    --border-color: #2a2a2a;
+    --font-primary: 'Raleway', sans-serif;
+    --font-secondary: sans-serif;
+}
+
+/* Применяем стили ко всей странице */
+body {
+    /* Устанавливаем анимированный градиентный фон для динамики */
+    background-color: var(--bg-color);
+
+    /* Устанавливаем светлый цвет текста */
+    color: var(--text-color);
+    /* Задаем базовый шрифт без засечек */
+    font-family: var(--font-secondary);
+    /* Убираем отступы по умолчанию у body */
+    margin: 0;
+    padding: 0;
+    /* Скрываем прокрутку, пока идет прелоадер */
+    overflow: hidden;
+    scroll-behavior: smooth;
+}
+
+/* --- Стили для прелоадера --- */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Заменим сплошной цвет на градиент для глубины */
+    background: radial-gradient(ellipse at center, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    z-index: 9999;
+
+    /* Центрируем содержимое прелоадера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Плавное исчезновение фона. Будет запущено через JS. */
+    transition: opacity 1s ease-in-out;
+}
+
+.preloader-content {
+    text-align: center;
+    position: relative; /* Чтобы контент был над звездами */
+    z-index: 1;
+}
+
+#preloader-logo {
+    width: 100px; /* Задайте нужный размер логотипа */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+    opacity: 0; /* Изначально логотип прозрачен */
+    /* Добавим тень для эффекта "свечения" */
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.15));
+    /* Анимация появления */
+    animation: fadeInLogo 1s ease-in forwards;
+    /* Задержка, чтобы логотип появлялся после начала анимации текста */
+    animation-delay: 1.5s;
+}
+
+#typing-text {
+    font-family: var(--font-primary); /* Более элегантный и "воздушный" шрифт */
+    font-weight: 300; /* Легкое начертание для утонченности */
+    font-size: 2.8em; /* Немного уменьшим для баланса */
+    text-transform: uppercase; /* Все буквы заглавные - классический прием */
+    letter-spacing: 0.25em; /* Увеличим расстояние для "премиального" вида */
+    /* Компенсируем letter-spacing для визуального центрирования */
+    padding-left: 0.25em;
+    margin: 0 auto;
+    /* Сделаем свечение более мягким и рассеянным */
+    text-shadow: 0 0 15px rgba(224, 224, 224, 0.1);
+    /* Flexbox нужен для правильного отображения пробелов между span */
+    display: flex;
+}
+
+/* Стили для каждой отдельной буквы */
+#typing-text span {
+    display: inline-block; /* Позволяет применять transform */
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    /* Анимация появления каждой буквы. Задержка задается в JS. */
+    animation: letter-reveal 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+
+/* Класс для запуска анимации исчезновения контента */
+.preloader--hiding #preloader-logo {
+    animation: fadeOutContent 0.5s ease-out forwards;
+}
+.preloader--hiding #typing-text span {
+    /* Применяем анимацию исчезновения к каждой букве */
+    animation: fadeOutContent 0.3s ease-out forwards;
+}
+
+/* --- Анимации --- */
+
+/* --- Анимация звезд --- */
+#stars-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.star, .meme-star {
+    position: absolute;
+    opacity: 0; /* Изначально невидимы, пока не начнется анимация */
+    /* Адаптируем под фон, создавая эффект свечения */
+    mix-blend-mode: color-dodge;
+}
+
+.star {
+    width: 2px;
+    height: 2px;
+    /* Сделаем цвет звезд более холодным, чтобы он соответствовал фону */
+    background: #dbe6ff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #dbe6ff, 0 0 8px #dbe6ff;
+    animation: shooting-star infinite linear;
+}
+
+.meme-star {
+    width: 40px; /* Уменьшили базовый размер мемов */
+    height: auto;
+    opacity: 0.8;
+    animation: shooting-meme infinite linear;
+}
+
+@keyframes shooting-star {
+    /* Добавляем размытие в движении */
+    from { transform: translate(0, 0) scale(var(--scale, 1)); opacity: 1; filter: blur(0); }
+    to   { transform: translate(-150vw, 150vh) scale(var(--scale, 1)); opacity: 0; filter: blur(2px); }
+}
+
+@keyframes shooting-meme {
+    /* Отдельная анимация для мемов с другой прозрачностью и размытием */
+    from {
+        transform: translate(0, 0) scale(var(--scale, 1));
+        opacity: 0.85; /* Сделали мемы более заметными */
+        filter: blur(0);
+    }
+    to {
+        transform: translate(-150vw, 150vh) scale(var(--scale, 1));
+        opacity: 0;
+        filter: blur(4px); /* Размытие для мемов сильнее */
+    }
+}
+
+/* Анимация появления логотипа */
+@keyframes fadeInLogo {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Новая анимация для появления букв */
+@keyframes letter-reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Новая анимация исчезновения контента */
+@keyframes fadeOutContent {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.8); }
+}
+
+/* --- Стили для основного контента --- */
+#main-content {
+    padding: 20px;
+    opacity: 0; /* Изначально контент невидим */
+    visibility: hidden;
+    transition: opacity 1s ease-in;
+    /* Задержка появления, чтобы дать прелоадеру полностью исчезнуть */
+    transition-delay: 0.5s;
+}
+
+/* --- Стили для шапки и футера --- */
+
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.site-footer-main {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color-muted);
+}
+
+/* --- Новые стили для шапки сайта --- */
+.site-header {
+    text-align: center;
+    padding: 40px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    transition: padding 0.4s ease, background-color 0.4s ease, backdrop-filter 0.4s ease, border-bottom-color 0.4s ease;
+    border-bottom: 1px solid transparent; /* Для плавного появления рамки */
+}
+
+/* "Стеклянный" эффект для шапки при прокрутке */
+.site-header.is-scrolled {
+    padding: 20px 20px;
+    background-color: rgba(26, 26, 26, 0.65); /* Полупрозрачный фон */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); /* Для Safari */
+    border-bottom-color: var(--border-color);
+}
+
+.site-title {
+    font-family: var(--font-primary);
+    font-size: 3.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 0;
+    /* Градиент убран, используется стандартный цвет текста */
+}
+
+/* --- Стили для навигации --- */
+.site-nav {
+    margin-top: 25px;
+}
+
+.site-nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.site-nav li {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.site-nav a {
+    font-family: var(--font-primary);
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--text-color-muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 8px 0;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.site-nav a:hover,
+.site-nav a:focus {
+    color: var(--text-color);
+    outline: none;
+}
+
+.site-nav a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: var(--text-color);
+    bottom: 0;
+    left: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.site-nav a:hover::after {
+    transform: scaleX(1);
+}
+
+/* --- Стили для влога --- */
+.vlog-container {
+    max-width: 900px; /* Ограничиваем ширину для читаемости */
+    margin: 0 auto; /* Центрируем контейнер */
+    padding: 0 20px 40px; /* Добавим отступ снизу */
+    display: flex;
+    /* Изменено: теперь новые посты будут отображаться сверху */
+    flex-direction: column-reverse;
+    gap: 50px; /* Расстояние между постами */
+}
+
+.vlog-post {
+    background-color: var(--surface-color); /* Чуть светлее основного фона */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden; /* Чтобы скруглить углы у контента внутри */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);    
+    /* Стили для анимации появления */
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease;
+}
+
+.vlog-post.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.vlog-post:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Добавляем курсор-указатель, если в блоке есть изображение */
+.post-media:has(img) {
+    cursor: pointer;
+}
+
+.post-media:has(iframe) {
+    cursor: default;
+}
+
+.post-media iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.post-media {
+    /* Контейнер для видео или изображения */
+    background-color: #000;
+    /* Возвращаем жесткое соотношение сторон 16:9 для всех постов */
+    aspect-ratio: 16 / 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    color: #555;
+    /* Важно, чтобы изображение не выходило за скругленные углы родителя */
+    overflow: hidden;
+    position: relative; /* Нужно для абсолютного позиционирования iframe и кнопок слайдера */
+}
+
+/* --- Стили для слайдера изображений --- */
+.slider-container {
+    width: 100%;
+    height: 100%;
+}
+
+.slider-wrapper {
+    display: flex;
+    height: 100%;
+    transition: transform 0.4s ease-in-out;
+}
+
+.slide {
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    padding: 12px 8px;
+    cursor: pointer;
+    font-size: 22px;
+    z-index: 10;
+    transition: background-color 0.2s ease;
+    line-height: 1;
+}
+
+.slider-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.slider-btn.prev { left: 10px; border-radius: 5px 0 0 5px; }
+.slider-btn.next { right: 10px; border-radius: 0 5px 5px 0; }
+
+/* Стили для сообщения об ошибке внутри слайдера */
+.slider-error {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #111;
+    color: #888;
+    font-size: 0.9em;
+}
+
+/* #19 Стили для shimmer-эффекта загрузки изображений */
+.shimmer-wrapper {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--surface-color) 25%, #222 50%, var(--surface-color) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* Стили для изображения внутри поста */
+.post-media img {
+    width: 100%;
+    height: 100%;
+    /* 'cover' заполняет контейнер, сохраняя пропорции, но обрезая лишнее.
+       Это обеспечивает одинаковый размер постов. */
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+/* Эффект легкого приближения картинки при наведении на пост */
+.vlog-post:hover .post-media img {
+    transform: scale(1.05);
+}
+
+.post-content {
+    padding: 25px;
+    /* #35 Плавное появление текста */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s 0.2s ease-out, transform 0.5s 0.2s ease-out;
+}
+.vlog-post.is-visible .post-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.post-title {
+    font-family: var(--font-primary);
+    font-size: 1.8em;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+}
+
+.post-date {
+    font-size: 0.9em;
+    color: var(--text-color-muted);
+    margin: -10px 0 15px 0;
+    font-style: italic;
+}
+
+.post-description {
+    font-size: 1em;
+    line-height: 1.6;
+    color: var(--text-color-muted); /* Чуть приглушенный цвет для текста */
+}
+
+/* --- Стили для блока действий под постом --- */
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px;
+    border-top: 1px solid var(--border-color);
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-color-muted);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.action-btn:hover {
+    background-color: #2c2c2c;
+    color: var(--text-color);
+}
+
+.action-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.like-btn svg path {
+    transition: fill 0.3s ease;
+}
+
+.like-btn.is-liked {
+    color: #e53935; /* Красный цвет для лайка */
+}
+.like-btn.is-liked:hover {
+    background-color: rgba(229, 57, 53, 0.1);
+}
+
+.like-counter {
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+/* #32 Анимация счетчика лайков */
+.like-counter.is-animating {
+    animation: pop-up 0.4s ease;
+}
+@keyframes pop-up {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+.share-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.copy-link-btn.is-copied {
+    color: #4caf50; /* Зеленый при успехе */
+}
+
+/* --- Стили для комментариев --- */
+.comments-section {
+    padding: 0 25px 25px;
+}
+
+.comments-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comment-item {
+    background-color: #222;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+.no-comments {
+    color: #777;
+    font-style: italic;
+}
+
+.comment-form {
+    display: flex;
+    gap: 10px;
+}
+
+.comment-form input {
+    flex-grow: 1;
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.comment-form button {
+    background-color: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- Стили для загрузчика и сообщений об ошибках --- */
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--border-color);
+    border-top-color: var(--text-color);
+    border-radius: 50%;
+    margin: 50px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-message {
+    text-align: center;
+    color: #ff6b6b; /* Яркий красный для привлечения внимания */
+    font-size: 1.1em;
+    padding: 40px 20px;
+    background-color: var(--surface-color);
+    border: 1px solid #ff6b6b;
+    border-radius: 8px;
+}
+
+/* --- Стили для Лайтбокса (просмотр изображений) --- */
+.lightbox {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Изначально скрыт и невидим */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease, visibility 0s 0.4s;
+}
+
+.lightbox.has-gallery .lightbox-prev,
+.lightbox.has-gallery .lightbox-next {
+    display: block;
+}
+
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 44px;
+    cursor: pointer;
+    padding: 16px;
+    transition: color 0.2s ease;
+    z-index: 10001;
+    user-select: none;
+    display: none; /* Скрыты по умолчанию */
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    color: white;
+}
+
+.lightbox-prev { left: 15px; }
+.lightbox-next { right: 15px; }
+
+.lightbox.is-active {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.lightbox-content {
+    max-width: 90%;
+    max-height: 85%;
+    object-fit: contain;
+    /* Анимация появления */
+    transform: scale(0.8);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.lightbox.is-active .lightbox-content {
+    transform: scale(1);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    user-select: none; /* Чтобы крестик не выделялся как текст */
+}
+
+.lightbox-close:hover {
+    color: var(--text-color-muted);
+}
+
+/* Когда лайтбокс активен, запрещаем прокрутку основной страницы */
+body.lightbox-open {
+    overflow: hidden;
+}
+
+/* #15 Стили для кнопки "Наверх" */
+#scrollTopBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: rgba(44, 44, 44, 0.8);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+    transform: translateY(20px);
+}
+
+#scrollTopBtn.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+#scrollTopBtn:hover {
+    background-color: #333;
+}
